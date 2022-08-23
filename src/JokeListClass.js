@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import Joke from './Joke';
 
 class JokeListClass extends React.Component {
     static defaultProps = {numberOfJokesToGet : 10, sillyArray : ['joke1','joke2','joke3','joke4',]}
@@ -20,14 +21,14 @@ class JokeListClass extends React.Component {
     
     }
 
-    componentDidUpdate() {
-        if (this.state.jokes < this.props.numberOfJokesToGet) this.generateNewJokes();
-        console.log('Updated');
+    // componentDidUpdate() {
+    //     if (this.state.jokes < this.props.numberOfJokesToGet) this.generateNewJokes();
+    //     console.log('Updated');
         // if (this.state.jokes.length === this.props.numberOfJokesToGet){ 
         //     // this.renderJokes();
         //     this.setState({jokes : this.state.jokes})
         // }
-    }
+    // }
 
     renderJokes() {
         this.state.jokes.map(j => <p>{j.joke}</p>)
@@ -56,14 +57,15 @@ class JokeListClass extends React.Component {
     }
 
     vote(id, delta) {
-        this.setState(jokes => {jokes : jokes.votes.map(
-            joke => joke.id === id ? {...joke, votes: joke.votes + delta} : joke)}   )
+        console.log(id);
+        console.log(delta);
+        const jokeVote = this.state.jokes.map(joke => joke.id === id ? {...joke, votes: joke.votes + delta} : joke) 
+        this.setState({...this.state, jokes : jokeVote})
     }
 
     render()  {
-        let jokes = this.state;
-        let sillyArray = this.props.sillyArray;
-        console.log(jokes)
+        // let sillyArray = this.props.sillyArray;
+        // console.log(jokes)
         // let sortedJokes = jokes.sort((a,b) => b.votes - a.votes)
         // console.log(sortedJokes);
         return (
@@ -71,8 +73,9 @@ class JokeListClass extends React.Component {
               <button className="JokeList-getmore" onClick={this.generateNewJokes}>
                 Get New Jokes
               </button>
-              {jokes.length === this.props.numberOfJokesToGet ? jokes.map(j => <p>{j.joke}</p>) : null}
+              {/* {jokes.length === this.props.numberOfJokesToGet ? jokes.map(j => <p>{j.joke}</p>) : null} */}
               {/* {sillyArray.map(el => <p>{el}</p>)} */}
+              {this.state.jokes.sort((a,b) => b.votes - a.votes).map(joke => <Joke key={joke.id} text={joke.joke} votes={joke.votes} vote={this.vote} id={joke.id}/>)}
             </div>
         )
     }
